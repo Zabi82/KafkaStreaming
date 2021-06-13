@@ -1,0 +1,9 @@
+{
+  "namespace" : "com.zabeer.kafkastreaming.model",
+  "type" : "record",
+  "name" : "ItemPrice",
+  "fields" : [
+    {"name":"id","type":"string"},
+    {"name":"price", "type":"float"}
+   ]
+}

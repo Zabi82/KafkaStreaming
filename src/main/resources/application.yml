@@ -1,0 +1,42 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: monitorProcessedRecords;itemProcessor;itemRetryProcessor;itemProcessorRetryTracker
+      bindings:
+        monitorProcessedRecords-in-0:
+          destination: item-processed
+        itemProcessor-in-0:
+          destination: item
+        itemProcessor-in-1:
+          destination: item-price
+        itemProcessor-out-0:
+          destination: item-processed
+        itemProcessor-out-1:
+          destination: item-price-pending
+        itemRetryProcessor-in-0:
+          destination: item-price-pending
+        itemRetryProcessor-in-1:
+          destination: item-price
+        itemRetryProcessor-out-0:
+          destination: item-processed
+        itemRetryProcessor-out-1:
+          destination: item-price-pending
+        itemProcessorRetryTracker-in-0:
+          destination: item-retry-tracker
+        itemProcessorRetryTracker-out-0:
+          destination: item-retry-tracker-aggregate
+
+
+      kafka:
+        bindings:
+        streams:
+          binder:
+            configuration:
+              schema.registry.url: http://localhost:8081
+              specific.avro.reader: true
+              default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+              default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+
+

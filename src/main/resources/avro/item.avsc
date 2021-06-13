@@ -1,0 +1,11 @@
+{
+  "namespace" : "com.zabeer.kafkastreaming.model",
+  "type" : "record",
+  "name" : "Item",
+  "fields" : [
+    {"name":"id","type":"string"},
+    {"name":"code", "type":"string"},
+    {"name":"description", "type":"string"},
+    {"name":"itemTimestamp","type":"long","logicalType": "timestamp-millis"}
+   ]
+}
