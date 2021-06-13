@@ -36,6 +36,9 @@ public class KafkaStreamingApplication {
 
     public static final String STORE_NAME = "item-retry-count-store";
 
+    //milliseconds to wait until regular processor can stop sending to retry processor when conditions are met to avoid out of order
+    public static final long TIME_TO_WAIT_AFTER_RETRY_PROCESSING = 1000L;
+
     @Autowired
     private ItemRetryTrackerNotificationService itemRetryTrackerNotificationService;
 
@@ -84,16 +87,16 @@ public class KafkaStreamingApplication {
                         itemRetryTrackerNotificationService.notifyItemRetryTrackerOnRetry(value.getKey(), sequenceToSet);
                         log.info("Item with id {} and sequence {} sent for retry " , value.getKey(), sequenceToSet);
                     } else {
+                        //price is now available, but we still should check if retry processor has finished processing previously sent records
                         ItemRetryTracker itemRetryTracker = stateStoreQueryService.getValue(value.getKey());
-                        long lastMessageProcessedOnRetry = itemRetryTracker == null ? 0L : itemRetryTracker.getLastMessageSentForRetry();
-                        long lastMessageSentForRetry = itemRetryTracker == null ? 0L : itemRetryTracker.getLastMessageProcessedOnRetry();
-                        //TODO need additional conditon to check for some reasonable time interval since the lastMessageProcessed for new events to be processed directly
-                        //without retry.
-                        if (lastMessageProcessedOnRetry < lastMessageSentForRetry) {
+                        long lastMessageProcessedOnRetry = itemRetryTracker == null ? 0L : itemRetryTracker.getLastMessageProcessedOnRetry();
+                        long lastMessageSentForRetry = itemRetryTracker == null ? 0L : itemRetryTracker.getLastMessageSentForRetry();
+                        long timeLastMessageProcessedOnRetry = itemRetryTracker == null ? 0L : itemRetryTracker.getTimeLastMessageProcessedOnRetry();
+                        if (lastMessageProcessedOnRetry < lastMessageSentForRetry || (System.currentTimeMillis() - timeLastMessageProcessedOnRetry) < TIME_TO_WAIT_AFTER_RETRY_PROCESSING) {
                             //sent event to update/notify ItemRetryTracker
                             sequenceToSet = lastMessageSentForRetry + 1;
                             itemRetryTrackerNotificationService.notifyItemRetryTrackerOnRetry(value.getKey(), sequenceToSet);
-                            log.info("Item with id {} and sequence {} sent for retry " , value.getKey(), sequenceToSet);
+                            log.info("Item with id {} and sequence {} sent for retry ", value.getKey(), sequenceToSet);
                         }
                         else {
                             log.info("Item with id {} processed without retry " , value.getKey());
@@ -127,8 +130,9 @@ public class KafkaStreamingApplication {
                     if (value.getValue1().getPrice() > 0.0f && lastMessageProcessedOnRetry + 1 == value.getValue1().getSequence()) {
                         //can process the message as order is expected and wont cause out of order processing
                         resentForRetry = false;
-                        //TODO since notification is published before the processing is finished there is chance the main processor can go ahead with some new items
-                        //before the pending retries are completely processed.
+                        //since notification is published before the processing is finished there is chance the main processor can go ahead with some new items
+                        //before the pending retries are completely processed. to tackle this some time threshold check introduced in main processor before it
+                        //can resume processing on its own even after retry records are processed.
                         itemRetryTrackerNotificationService.notifyItemRetryTrackerOnProcessed(value.getKey(), value.getValue1().getSequence());
                         log.info("Item with id {} and sequence {} processed on retry " , value.getKey(), value.getValue1().getSequence());
                     }
@@ -147,11 +151,13 @@ public class KafkaStreamingApplication {
 
         return input -> input
                 .groupByKey(Grouped.with(Serdes.String(), avroItemRetryTrackerInSerde())).aggregate(
-                        () -> new ItemRetryTracker("", 0L, 0L),
+                        () -> new ItemRetryTracker("", 0L, 0L,0L, 0L),
                         ((key, value, aggregate) ->
                                 new ItemRetryTracker(key,
                                         Math.max(value.getLastMessageSentForRetry(), aggregate.getLastMessageSentForRetry()),
-                                        Math.max(value.getLastMessageProcessedOnRetry(), aggregate.getLastMessageProcessedOnRetry()))),
+                                        Math.max(value.getLastMessageProcessedOnRetry(), aggregate.getLastMessageProcessedOnRetry()),
+                                        Math.max(value.getTimeLastMessageSentForRetry(), aggregate.getTimeLastMessageSentForRetry()),
+                                        Math.max(value.getTimeLastMessageProcessedOnRetry(), aggregate.getTimeLastMessageProcessedOnRetry()))),
                         Materialized.<String, ItemRetryTracker, KeyValueStore<Bytes, byte[]>>as(STORE_NAME).withKeySerde(Serdes.String()).withValueSerde(avroItemRetryTrackerInSerde()))
                 .toStream();
     }

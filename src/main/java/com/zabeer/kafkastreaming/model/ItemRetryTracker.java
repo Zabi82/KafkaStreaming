@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 5364411700532930356L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ItemRetryTracker\",\"namespace\":\"com.zabeer.kafkastreaming.model\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"lastMessageSentForRetry\",\"type\":\"long\"},{\"name\":\"lastMessageProcessedOnRetry\",\"type\":\"long\"}]}");
+  private static final long serialVersionUID = 9092877164639056363L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ItemRetryTracker\",\"namespace\":\"com.zabeer.kafkastreaming.model\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"lastMessageSentForRetry\",\"type\":\"long\"},{\"name\":\"lastMessageProcessedOnRetry\",\"type\":\"long\"},{\"name\":\"timeLastMessageSentForRetry\",\"type\":\"long\"},{\"name\":\"timeLastMessageProcessedOnRetry\",\"type\":\"long\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -74,6 +74,8 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
    private java.lang.CharSequence id;
    private long lastMessageSentForRetry;
    private long lastMessageProcessedOnRetry;
+   private long timeLastMessageSentForRetry;
+   private long timeLastMessageProcessedOnRetry;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -87,11 +89,15 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
    * @param id The new value for id
    * @param lastMessageSentForRetry The new value for lastMessageSentForRetry
    * @param lastMessageProcessedOnRetry The new value for lastMessageProcessedOnRetry
+   * @param timeLastMessageSentForRetry The new value for timeLastMessageSentForRetry
+   * @param timeLastMessageProcessedOnRetry The new value for timeLastMessageProcessedOnRetry
    */
-  public ItemRetryTracker(java.lang.CharSequence id, java.lang.Long lastMessageSentForRetry, java.lang.Long lastMessageProcessedOnRetry) {
+  public ItemRetryTracker(java.lang.CharSequence id, java.lang.Long lastMessageSentForRetry, java.lang.Long lastMessageProcessedOnRetry, java.lang.Long timeLastMessageSentForRetry, java.lang.Long timeLastMessageProcessedOnRetry) {
     this.id = id;
     this.lastMessageSentForRetry = lastMessageSentForRetry;
     this.lastMessageProcessedOnRetry = lastMessageProcessedOnRetry;
+    this.timeLastMessageSentForRetry = timeLastMessageSentForRetry;
+    this.timeLastMessageProcessedOnRetry = timeLastMessageProcessedOnRetry;
   }
 
   public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
@@ -102,6 +108,8 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
     case 0: return id;
     case 1: return lastMessageSentForRetry;
     case 2: return lastMessageProcessedOnRetry;
+    case 3: return timeLastMessageSentForRetry;
+    case 4: return timeLastMessageProcessedOnRetry;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -113,6 +121,8 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
     case 0: id = (java.lang.CharSequence)value$; break;
     case 1: lastMessageSentForRetry = (java.lang.Long)value$; break;
     case 2: lastMessageProcessedOnRetry = (java.lang.Long)value$; break;
+    case 3: timeLastMessageSentForRetry = (java.lang.Long)value$; break;
+    case 4: timeLastMessageProcessedOnRetry = (java.lang.Long)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -169,6 +179,40 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
   }
 
   /**
+   * Gets the value of the 'timeLastMessageSentForRetry' field.
+   * @return The value of the 'timeLastMessageSentForRetry' field.
+   */
+  public long getTimeLastMessageSentForRetry() {
+    return timeLastMessageSentForRetry;
+  }
+
+
+  /**
+   * Sets the value of the 'timeLastMessageSentForRetry' field.
+   * @param value the value to set.
+   */
+  public void setTimeLastMessageSentForRetry(long value) {
+    this.timeLastMessageSentForRetry = value;
+  }
+
+  /**
+   * Gets the value of the 'timeLastMessageProcessedOnRetry' field.
+   * @return The value of the 'timeLastMessageProcessedOnRetry' field.
+   */
+  public long getTimeLastMessageProcessedOnRetry() {
+    return timeLastMessageProcessedOnRetry;
+  }
+
+
+  /**
+   * Sets the value of the 'timeLastMessageProcessedOnRetry' field.
+   * @param value the value to set.
+   */
+  public void setTimeLastMessageProcessedOnRetry(long value) {
+    this.timeLastMessageProcessedOnRetry = value;
+  }
+
+  /**
    * Creates a new ItemRetryTracker RecordBuilder.
    * @return A new ItemRetryTracker RecordBuilder
    */
@@ -212,6 +256,8 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
     private java.lang.CharSequence id;
     private long lastMessageSentForRetry;
     private long lastMessageProcessedOnRetry;
+    private long timeLastMessageSentForRetry;
+    private long timeLastMessageProcessedOnRetry;
 
     /** Creates a new Builder */
     private Builder() {
@@ -236,6 +282,14 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
         this.lastMessageProcessedOnRetry = data().deepCopy(fields()[2].schema(), other.lastMessageProcessedOnRetry);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
+      if (isValidValue(fields()[3], other.timeLastMessageSentForRetry)) {
+        this.timeLastMessageSentForRetry = data().deepCopy(fields()[3].schema(), other.timeLastMessageSentForRetry);
+        fieldSetFlags()[3] = other.fieldSetFlags()[3];
+      }
+      if (isValidValue(fields()[4], other.timeLastMessageProcessedOnRetry)) {
+        this.timeLastMessageProcessedOnRetry = data().deepCopy(fields()[4].schema(), other.timeLastMessageProcessedOnRetry);
+        fieldSetFlags()[4] = other.fieldSetFlags()[4];
+      }
     }
 
     /**
@@ -255,6 +309,14 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
       if (isValidValue(fields()[2], other.lastMessageProcessedOnRetry)) {
         this.lastMessageProcessedOnRetry = data().deepCopy(fields()[2].schema(), other.lastMessageProcessedOnRetry);
         fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.timeLastMessageSentForRetry)) {
+        this.timeLastMessageSentForRetry = data().deepCopy(fields()[3].schema(), other.timeLastMessageSentForRetry);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.timeLastMessageProcessedOnRetry)) {
+        this.timeLastMessageProcessedOnRetry = data().deepCopy(fields()[4].schema(), other.timeLastMessageProcessedOnRetry);
+        fieldSetFlags()[4] = true;
       }
     }
 
@@ -376,6 +438,84 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
       return this;
     }
 
+    /**
+      * Gets the value of the 'timeLastMessageSentForRetry' field.
+      * @return The value.
+      */
+    public long getTimeLastMessageSentForRetry() {
+      return timeLastMessageSentForRetry;
+    }
+
+
+    /**
+      * Sets the value of the 'timeLastMessageSentForRetry' field.
+      * @param value The value of 'timeLastMessageSentForRetry'.
+      * @return This builder.
+      */
+    public com.zabeer.kafkastreaming.model.ItemRetryTracker.Builder setTimeLastMessageSentForRetry(long value) {
+      validate(fields()[3], value);
+      this.timeLastMessageSentForRetry = value;
+      fieldSetFlags()[3] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'timeLastMessageSentForRetry' field has been set.
+      * @return True if the 'timeLastMessageSentForRetry' field has been set, false otherwise.
+      */
+    public boolean hasTimeLastMessageSentForRetry() {
+      return fieldSetFlags()[3];
+    }
+
+
+    /**
+      * Clears the value of the 'timeLastMessageSentForRetry' field.
+      * @return This builder.
+      */
+    public com.zabeer.kafkastreaming.model.ItemRetryTracker.Builder clearTimeLastMessageSentForRetry() {
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'timeLastMessageProcessedOnRetry' field.
+      * @return The value.
+      */
+    public long getTimeLastMessageProcessedOnRetry() {
+      return timeLastMessageProcessedOnRetry;
+    }
+
+
+    /**
+      * Sets the value of the 'timeLastMessageProcessedOnRetry' field.
+      * @param value The value of 'timeLastMessageProcessedOnRetry'.
+      * @return This builder.
+      */
+    public com.zabeer.kafkastreaming.model.ItemRetryTracker.Builder setTimeLastMessageProcessedOnRetry(long value) {
+      validate(fields()[4], value);
+      this.timeLastMessageProcessedOnRetry = value;
+      fieldSetFlags()[4] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'timeLastMessageProcessedOnRetry' field has been set.
+      * @return True if the 'timeLastMessageProcessedOnRetry' field has been set, false otherwise.
+      */
+    public boolean hasTimeLastMessageProcessedOnRetry() {
+      return fieldSetFlags()[4];
+    }
+
+
+    /**
+      * Clears the value of the 'timeLastMessageProcessedOnRetry' field.
+      * @return This builder.
+      */
+    public com.zabeer.kafkastreaming.model.ItemRetryTracker.Builder clearTimeLastMessageProcessedOnRetry() {
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public ItemRetryTracker build() {
@@ -384,6 +524,8 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.lastMessageSentForRetry = fieldSetFlags()[1] ? this.lastMessageSentForRetry : (java.lang.Long) defaultValue(fields()[1]);
         record.lastMessageProcessedOnRetry = fieldSetFlags()[2] ? this.lastMessageProcessedOnRetry : (java.lang.Long) defaultValue(fields()[2]);
+        record.timeLastMessageSentForRetry = fieldSetFlags()[3] ? this.timeLastMessageSentForRetry : (java.lang.Long) defaultValue(fields()[3]);
+        record.timeLastMessageProcessedOnRetry = fieldSetFlags()[4] ? this.timeLastMessageProcessedOnRetry : (java.lang.Long) defaultValue(fields()[4]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -422,6 +564,10 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
 
     out.writeLong(this.lastMessageProcessedOnRetry);
 
+    out.writeLong(this.timeLastMessageSentForRetry);
+
+    out.writeLong(this.timeLastMessageProcessedOnRetry);
+
   }
 
   @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
@@ -435,8 +581,12 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
 
       this.lastMessageProcessedOnRetry = in.readLong();
 
+      this.timeLastMessageSentForRetry = in.readLong();
+
+      this.timeLastMessageProcessedOnRetry = in.readLong();
+
     } else {
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 5; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
           this.id = in.readString(this.id instanceof Utf8 ? (Utf8)this.id : null);
@@ -448,6 +598,14 @@ public class ItemRetryTracker extends org.apache.avro.specific.SpecificRecordBas
 
         case 2:
           this.lastMessageProcessedOnRetry = in.readLong();
+          break;
+
+        case 3:
+          this.timeLastMessageSentForRetry = in.readLong();
+          break;
+
+        case 4:
+          this.timeLastMessageProcessedOnRetry = in.readLong();
           break;
 
         default:

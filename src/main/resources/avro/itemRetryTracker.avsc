@@ -5,7 +5,9 @@
   "fields" : [
     {"name":"id","type":"string"},
     {"name":"lastMessageSentForRetry", "type":"long"},
-    {"name":"lastMessageProcessedOnRetry", "type":"long"}
+    {"name":"lastMessageProcessedOnRetry", "type":"long"},
+    {"name":"timeLastMessageSentForRetry", "type":"long"},
+    {"name":"timeLastMessageProcessedOnRetry", "type":"long"}
 
    ]
 }

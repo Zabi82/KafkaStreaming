@@ -23,21 +23,24 @@ public class ItemRetryTrackerNotificationServiceImpl implements ItemRetryTracker
 
     @Override
     public void notifyItemRetryTrackerOnRetry(String itemId, Long retrySequence) {
-        //while sending this send retrySequence as Received and set processed as 0
-        produceItemTrackerEntry(itemId, retrySequence, 0L);
+        //while sending this send retrySequence as Received and set processed & timeLastProcessed as 0
+        //no need to worry about processed values set to 0 as max value will be aggregated and used while reading
+        produceItemTrackerEntry(itemId, retrySequence, 0L, System.currentTimeMillis(), 0L);
         log.info("Updated Retry Tracker for Item Id {} with retrySequence {} ", itemId , retrySequence);
     }
 
     @Override
     @Async
     public void notifyItemRetryTrackerOnProcessed(String itemId, Long processedSequence) {
-        //while sending this send processedSequence as Received and set retry as 0
-        produceItemTrackerEntry(itemId, 0L, processedSequence);
+        //while sending this send processedSequence as Received and set retry and timeLastRetry as 0
+        //no need to worry about retry values set to 0 as max value will be aggregated and used while reading
+
+        produceItemTrackerEntry(itemId, 0L, processedSequence, 0L, System.currentTimeMillis());
         log.info("Updated Retry Tracker for Item Id {} with processedSequence {} ", itemId, processedSequence);
     }
 
 
-    private void produceItemTrackerEntry(String itemId, Long retrySequence, Long processedSequence) {
+    private void produceItemTrackerEntry(String itemId, Long retrySequence, Long processedSequence, Long timeLastRetry, Long timeLastProcessed) {
 
         Properties props = getProducerProperties();
 
@@ -47,6 +50,8 @@ public class ItemRetryTrackerNotificationServiceImpl implements ItemRetryTracker
         itemRetryTracker.setId(itemId);
         itemRetryTracker.setLastMessageSentForRetry(retrySequence);
         itemRetryTracker.setLastMessageProcessedOnRetry(processedSequence);
+        itemRetryTracker.setTimeLastMessageSentForRetry(timeLastRetry);
+        itemRetryTracker.setTimeLastMessageProcessedOnRetry(timeLastProcessed);
         ProducerRecord<String, ItemRetryTracker> record = new ProducerRecord<>(ITEM_TRACKER_TOPIC, itemRetryTracker.getId().toString(), itemRetryTracker);
 
         kafkaProducer.send(record, (recordMetaData, exception) -> {

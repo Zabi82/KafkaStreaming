@@ -84,6 +84,8 @@ public class TestProducer {
 		itemRetryTracker.setId(itemId);
 		itemRetryTracker.setLastMessageSentForRetry(lastMessageSentForRetry);
 		itemRetryTracker.setLastMessageProcessedOnRetry(lastMessageProcessedOnRetry);
+		itemRetryTracker.setTimeLastMessageSentForRetry(0L);
+		itemRetryTracker.setTimeLastMessageProcessedOnRetry(0L);
 
 		ProducerRecord<String, ItemRetryTracker> record = new ProducerRecord<>(ITEM_RETRY_TRACKER_TOPIC, itemRetryTracker.getId().toString(), itemRetryTracker);
 
@@ -122,12 +124,12 @@ public class TestProducer {
 
 	public static void main(String[] args) throws Exception {
 		TestProducer producer = new TestProducer();
-		producer.produceItemMessage("4","CakeV", "Cake Vanilla", 3);
+		producer.produceItemMessage("6","CakeBB", "Cake Blueberry", 3);
 		//simulate delay in publishing Item Price
 		Thread.sleep(500);
-		producer.produceItemPriceMessage("4", 100);
+		producer.produceItemPriceMessage("6", 200);
 		//simulate few items of the same type published after price available
-		producer.produceItemMessage("4","CakeV", "Cake Vanilla", 2);
+		producer.produceItemMessage("6","CakeBB", "Cake Blueberry", 2);
 		//producer.produceItemRetryTrackerMessage("TEST123", 1L, 0L);
 
 	}
